@@ -9,117 +9,71 @@ import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
   useColorScheme,
   View,
+  TextInput,
+  TouchableOpacity,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const options = {
+  method: 'GET',
+  headers: {
+    'X-RapidAPI-Key': '27ab2c9fc8mshd4d0a754da0ee5dp1b31ebjsn9b823acef188',
+    'X-RapidAPI-Host': 'cheapshark-game-deals.p.rapidapi.com',
+  },
+};
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+function fetchStoreFromId(storeID: string) {
+  const url = 'https://cheapshark-game-deals.p.rapidapi.com/stores';
 
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
+  try {
+    fetch(url, options)
+      .then(response => response.json())
+      .then(json => {
+        json.forEach(store => {
+          if (store.storeID === storeID) {
+            console.log(store.storeName);
+            // return store.storeName;
+          }
+        });
+      });
+  } catch (error) {
+    console.error(error);
+  }
 }
 
-function fetchOneGame(gameName: string) {
-  return fetch(
-    `https://api.isthereanydeal.com/v01/game/prices/?key=c97bdc5cb66b1958807692e735766b3da22be37c&plains=${gameName}&region=eu2&country=SK&shops=steam%2Cindiegamestand%2Camazonus&exclude=voidu%2Citchio&added=0`,
-  )
-    .then(response => response.json())
-    .then(json => {
-      if (json.data[gameName]) {
-        const gameData = json.data[gameName];
-        const initialPrice = gameData.list[0].price_old;
-        const newPrice = gameData.list[0].price_new;
-        const priceCut = gameData.list[0].price_cut;
+function getCheapestGame(gameName: string) {
+  const url = `https://cheapshark-game-deals.p.rapidapi.com/deals?steamRating=0&title=${gameName}&desc=0&output=json&steamworks=0&sortBy=Price&AAA=0&pageSize=60&exact=true&upperPrice=50&pageNumber=0&metacritic=0`;
 
-        console.log(`Game: ${gameName}`);
-        console.log(`Initial Price: ${initialPrice} EUR`);
-        console.log(`Discount Percentage: ${priceCut}%`);
-        console.log(`Discounted Price: ${newPrice} EUR`);
-      } else {
-        console.log(`Game ${gameName} not found.`);
-      }
-    })
-    .catch(error => {
-      console.error(error);
-    });
+  try {
+    fetch(url, options)
+      .then(response => response.json())
+      .then(json => {
+        console.log(json[0].internalName);
+        console.log(json[0].title);
+        console.log(json[0].salePrice);
+        fetchStoreFromId(json[0].storeID);
+      });
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 function App(): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  fetchOneGame('eldenring');
-  fetchOneGame('citiesskylines');
+  // getCheapestGame('eldenring');
+  // getCheapestGame('arksurvivalevolved');
+  // getCheapestGame('nomanssky');
+  getCheapestGame('arksurvivalevolved');
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step Oneeee">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
+    <SafeAreaView>
+      <Text>Pokemon name</Text>
+      <TextInput placeholder="Test" />
+      <TouchableOpacity>
+        <Text>SUBMIT</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
