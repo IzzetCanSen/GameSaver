@@ -55,12 +55,40 @@ function Section({children, title}: SectionProps): JSX.Element {
   );
 }
 
+function fetchOneGame(gameName: string) {
+  return fetch(
+    `https://api.isthereanydeal.com/v01/game/prices/?key=c97bdc5cb66b1958807692e735766b3da22be37c&plains=${gameName}&region=eu2&country=SK&shops=steam%2Cindiegamestand%2Camazonus&exclude=voidu%2Citchio&added=0`,
+  )
+    .then(response => response.json())
+    .then(json => {
+      if (json.data[gameName]) {
+        const gameData = json.data[gameName];
+        const initialPrice = gameData.list[0].price_old;
+        const newPrice = gameData.list[0].price_new;
+        const priceCut = gameData.list[0].price_cut;
+
+        console.log(`Game: ${gameName}`);
+        console.log(`Initial Price: ${initialPrice} EUR`);
+        console.log(`Discount Percentage: ${priceCut}%`);
+        console.log(`Discounted Price: ${newPrice} EUR`);
+      } else {
+        console.log(`Game ${gameName} not found.`);
+      }
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
+
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+  fetchOneGame('eldenring');
+  fetchOneGame('citiesskylines');
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -76,7 +104,7 @@ function App(): JSX.Element {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <Section title="Step One">
+          <Section title="Step Oneeee">
             Edit <Text style={styles.highlight}>App.tsx</Text> to change this
             screen and then come back to see your edits.
           </Section>
