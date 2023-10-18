@@ -65,34 +65,61 @@ function App(): JSX.Element {
   // getCheapestGame('eldenring');
   // getCheapestGame('arksurvivalevolved');
   // getCheapestGame('nomanssky');
-  getCheapestGame('arksurvivalevolved');
+  // getCheapestGame('arksurvivalevolved');
 
   return (
-    <SafeAreaView>
-      <Text>Pokemon name</Text>
-      <TextInput placeholder="Test" />
-      <TouchableOpacity>
-        <Text>SUBMIT</Text>
-      </TouchableOpacity>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.searchBarContainer}>
+        <Text style={styles.searchBarTitle}>Game</Text>
+        <TextInput
+          style={styles.searchBar}
+          placeholder="ARK Survival Evolved..."
+          placeholderTextColor="#eeeeee"
+        />
+        <TouchableOpacity style={styles.searchBarBtn}>
+          <Text style={styles.searchBarBtnText}>SUBMIT</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    backgroundColor: '#1f1f1f',
+    height: '100%',
+    paddingTop: 50,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  searchBarContainer: {
+    alignItems: 'center',
   },
-  sectionDescription: {
-    marginTop: 8,
+  searchBar: {
+    borderWidth: 0,
+    borderColor: '#6413B7',
+    backgroundColor: '#8244D6',
+    paddingTop: 5,
+    paddingRight: 20,
+    paddingBottom: 5,
+    paddingLeft: 20,
+    borderRadius: 30,
+    marginTop: 5,
+    marginBottom: 10,
+    width: '80%',
+  },
+  searchBarTitle: {
+    color: '#ffffff',
     fontSize: 18,
-    fontWeight: '400',
   },
-  highlight: {
+  searchBarBtn: {
+    backgroundColor: '#6413B7',
+    paddingTop: 10,
+    paddingRight: 30,
+    paddingBottom: 10,
+    paddingLeft: 30,
+    borderRadius: 20,
+  },
+  searchBarBtnText: {
+    color: '#ffffff',
     fontWeight: '700',
   },
 });
