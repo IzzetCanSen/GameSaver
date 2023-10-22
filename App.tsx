@@ -27,10 +27,11 @@ const options = {
 
 function App(): JSX.Element {
   const [gameName, setGameName] = React.useState('');
-  // getCheapestGame('eldenring');
-  // getCheapestGame('arksurvivalevolved');
-  // getCheapestGame('nomanssky');
-  // getCheapestGame('arksurvivalevolved');
+  const [foundDeal, setFoundDeal] = React.useState(false);
+  const [dealGame, setDealGame] = React.useState('');
+  const [dealStore, setDealStore] = React.useState('');
+  const [dealPrice, setDealPrice] = React.useState('');
+  const [gameNotFound, setGameNotFound] = React.useState(false);
 
   function fetchStoreFromId(storeID: string) {
     const url = 'https://cheapshark-game-deals.p.rapidapi.com/stores';
@@ -42,7 +43,7 @@ function App(): JSX.Element {
           json.forEach(store => {
             if (store.storeID === storeID) {
               console.log(store.storeName);
-              // return store.storeName;
+              setDealStore(store.storeName);
             }
           });
         });
@@ -58,10 +59,22 @@ function App(): JSX.Element {
       fetch(url, options)
         .then(response => response.json())
         .then(json => {
-          console.log(json[0].internalName);
-          console.log(json[0].title);
-          console.log(json[0].salePrice);
-          fetchStoreFromId(json[0].storeID);
+          if (json.length > 0) {
+            console.log(json[0].internalName);
+            console.log(json[0].title);
+            console.log(json[0].salePrice);
+
+            setDealGame(json[0].title);
+            setDealPrice(json[0].salePrice);
+
+            fetchStoreFromId(json[0].storeID);
+            setFoundDeal(true);
+            setGameNotFound(false);
+          } else {
+            console.log('No data found.');
+            setFoundDeal(false);
+            setGameNotFound(true);
+          }
         });
     } catch (error) {
       console.error(error);
@@ -89,6 +102,18 @@ function App(): JSX.Element {
           <Text style={styles.searchBarBtnText}>SUBMIT</Text>
         </TouchableOpacity>
       </View>
+      {foundDeal && (
+        <View style={styles.resultContainer}>
+          <Text style={styles.searchBarTitle}>Game: {dealGame}</Text>
+          <Text style={styles.searchBarTitle}>Store: {dealStore}</Text>
+          <Text style={styles.searchBarTitle}>Price: {dealPrice}</Text>
+        </View>
+      )}
+      {gameNotFound && (
+        <View style={styles.resultContainer}>
+          <Text style={styles.searchBarTitle}>Game not found</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -131,6 +156,12 @@ const styles = StyleSheet.create({
   searchBarBtnText: {
     color: '#ffffff',
     fontWeight: '700',
+  },
+  resultContainer: {
+    rowGap: 10,
+    marginTop: 50,
+    paddingLeft: '10%',
+    paddingRight: '10%',
   },
 });
 
